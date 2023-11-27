@@ -52,4 +52,8 @@ jobs:
       run: make migrateup
 
     - name: Test
+      env:
+        SQLC_AUTH_TOKEN: ${{ secrets.SQLC_AUTH_TOKEN }}
+        DB_DRIVER: ${{ secrets.DB_DRIVER }}
+        DB_SOURCE: ${{ secrets.DB_SOURCE }}
       run: make test
