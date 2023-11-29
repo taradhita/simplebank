@@ -33,14 +33,14 @@ jobs:
           --health-retries 5
 
     steps:
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v3
+
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
         go-version: '1.21.4'
       id: go
-    
-    - name: Check out code into the Go module directory
-      uses: actions/checkout@v3
 
     - name: Install golang-migrate
       run: |
@@ -51,9 +51,14 @@ jobs:
     - name: Run migration
       run: make migrateup
 
+    - name: Create .env file
+      uses: SpicyPizza/create-envfile@v2.0.2
+      with:
+        envkey_DEBUG: false
+        envkey_SQLC_AUTH_TOKEN: ${{ secrets.SQLC_AUTH_TOKEN }}
+        envkey_DB_DRIVER: ${{ secrets.DB_DRIVER }}
+        envkey_DB_SOURCE: ${{ secrets.DB_SOURCE }}
+        file_name: app.env
+
     - name: Test
-      env:
-        SQLC_AUTH_TOKEN: ${{ secrets.SQLC_AUTH_TOKEN }}
-        DB_DRIVER: ${{ secrets.DB_DRIVER }}
-        DB_SOURCE: ${{ secrets.DB_SOURCE }}
       run: make test
